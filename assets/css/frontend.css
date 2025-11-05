@@ -34,6 +34,42 @@
     opacity: 0.8;
 }
 
+/* Add better cursor for words with tooltips */
+.keylouds-cloud-container span[title] {
+    cursor: pointer;
+}
+
+/* Custom tooltip styling */
+.keylouds-tooltip {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 999999;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.2s ease;
+    opacity: 0;
+}
+
+.keylouds-tooltip.visible {
+    opacity: 1;
+}
+
+.keylouds-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.85);
+}
+
 /* Fallback styling for non-JS users */
 .keylouds-cloud-fallback {
     line-height: 1.2;

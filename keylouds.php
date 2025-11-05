@@ -3,7 +3,7 @@
  * Plugin Name: Keylouds
  * Plugin URI: https://github.com/markfenske84/keylouds
  * Description: Create keyword clouds from any URL and display them with shortcodes or Gutenberg blocks
- * Version: 1.1.3
+ * Version: 1.1.7
  * Author: Webfor Agency
  * Author URI: https://webfor.com
  * License: GPL v2 or later
@@ -30,7 +30,7 @@ if (!defined('KEYLOUDS_DISABLE_UPDATES') && file_exists(__DIR__ . '/plugin-updat
 }
 
 // Define plugin constants
-define('KEYLOUDS_VERSION', '1.1.3');
+define('KEYLOUDS_VERSION', '1.1.7');
 define('KEYLOUDS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('KEYLOUDS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -478,19 +478,22 @@ class Keylouds {
                 }
                 // Ensure weight is between 1 and 10
                 $weight = max(1, min(10, $weight));
-                $normalized[$word] = $weight;
+                // Store both weight and original count
+                $normalized[$word] = array('weight' => $weight, 'count' => $count);
             }
             
             // Sort by weight (descending) to arrange by frequency
-            arsort($normalized);
+            uasort($normalized, function($a, $b) {
+                return $b['weight'] - $a['weight'];
+            });
             
             // Rearrange so biggest words are in the middle
             $arranged = array();
             $temp_array = array();
             $index = 0;
             
-            foreach ($normalized as $word => $weight) {
-                $temp_array[] = array('word' => $word, 'weight' => $weight);
+            foreach ($normalized as $word => $data) {
+                $temp_array[] = array('word' => $word, 'weight' => $data['weight'], 'count' => $data['count']);
             }
             
             // Alternate between adding to beginning and end to create a pattern
@@ -513,9 +516,9 @@ class Keylouds {
             // Combine: left (reversed) + right creates center-heavy layout
             $result = array_merge($left, $right);
             
-            // Convert back to associative array
+            // Convert back to associative array with both weight and count
             foreach ($result as $item) {
-                $arranged[$item['word']] = $item['weight'];
+                $arranged[$item['word']] = array('weight' => $item['weight'], 'count' => $item['count']);
             }
             
             return $arranged;
@@ -619,9 +622,18 @@ class Keylouds {
         
         // Add fallback content for non-JS users (SEO and accessibility)
         $output .= '<noscript><div class="keylouds-cloud-fallback">';
-        foreach ($keywords as $word => $weight) {
+        foreach ($keywords as $word => $data) {
+            // Handle both old format (weight only) and new format (array with weight and count)
+            if (is_array($data)) {
+                $weight = isset($data['weight']) ? intval($data['weight']) : 1;
+                $count = isset($data['count']) ? intval($data['count']) : 0;
+            } else {
+                $weight = intval($data);
+                $count = 0;
+            }
+            
             // Ensure weight is at least 1
-            $weight = max(1, intval($weight));
+            $weight = max(1, $weight);
             
             // Calculate font size: 0.8em (min) to 3.0em (max)
             $font_size = 0.8 + (($weight - 1) / 9) * 2.2;
@@ -630,10 +642,12 @@ class Keylouds {
             $color = $this->get_color_for_size($font_size, $custom_colors);
             
             $output .= sprintf(
-                '<span class="keylouds-word" data-weight="%d" style="font-size: %.2fem; color: %s;">%s</span> ',
+                '<span class="keylouds-word" data-weight="%d" data-count="%d" style="font-size: %.2fem; color: %s;" title="Found %d times">%s</span> ',
                 esc_attr($weight),
+                esc_attr($count),
                 $font_size,
                 esc_attr($color),
+                $count,
                 esc_html($word)
             );
         }

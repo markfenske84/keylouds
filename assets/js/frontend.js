@@ -36,12 +36,30 @@
             try {
                 const keywords = JSON.parse(cloudData);
                 
+                // Store count data for tooltips - map word to count
+                const wordCounts = {};
+                
                 // Convert keywords object to wordcloud2 format: [[word, weight], ...]
+                // Handle both old format (weight only) and new format (object with weight and count)
                 // Sort by weight descending to ensure most used words are processed first
                 const wordList = Object.entries(keywords)
-                    .sort(function(a, b) { return b[1] - a[1]; })
+                    .sort(function(a, b) { 
+                        const weightA = typeof a[1] === 'object' ? a[1].weight : a[1];
+                        const weightB = typeof b[1] === 'object' ? b[1].weight : b[1];
+                        return weightB - weightA;
+                    })
                     .map(function(entry) {
-                        return [entry[0], entry[1]];
+                        const word = entry[0];
+                        const data = entry[1];
+                        
+                        // Handle both old and new format
+                        if (typeof data === 'object') {
+                            wordCounts[word] = data.count || 0;
+                            return [word, data.weight || 1];
+                        } else {
+                            wordCounts[word] = 0;
+                            return [word, data];
+                        }
                     });
                 
                 // Get min and max weights for better scaling
@@ -152,6 +170,67 @@
                         // Callback when drawing is complete
                         drawOutOfBound: false
                     });
+                    
+                    // Add tooltips to all word elements after rendering
+                    setTimeout(function() {
+                        // Create tooltip element if it doesn't exist
+                        var tooltip = document.getElementById('keylouds-tooltip');
+                        if (!tooltip) {
+                            tooltip = document.createElement('div');
+                            tooltip.id = 'keylouds-tooltip';
+                            tooltip.className = 'keylouds-tooltip';
+                            document.body.appendChild(tooltip);
+                        }
+                        
+                        const wordElements = container.querySelectorAll('span');
+                        wordElements.forEach(function(element) {
+                            const word = element.textContent || element.innerText;
+                            const count = wordCounts[word];
+                            
+                            // Add tooltip for all words (show count if available, or indicate data unavailable)
+                            if (count !== undefined && count > 0) {
+                                element.setAttribute('title', 'Found ' + count + ' times');
+                                element.setAttribute('data-count', count);
+                                element.setAttribute('data-has-count', 'true');
+                            } else {
+                                // For old data or missing counts, still add tooltip
+                                element.setAttribute('title', 'Count data unavailable');
+                                element.setAttribute('data-count', '0');
+                                element.setAttribute('data-has-count', 'false');
+                                console.warn('Word missing count data:', word, 'Available counts:', Object.keys(wordCounts).slice(0, 5));
+                            }
+                            
+                            // Add mouseover/mouseout events for custom tooltip
+                            element.addEventListener('mouseenter', function(e) {
+                                const count = this.getAttribute('data-count');
+                                const hasCount = this.getAttribute('data-has-count') === 'true';
+                                
+                                if (hasCount && count > 0) {
+                                    tooltip.textContent = 'Found ' + count + ' times';
+                                } else {
+                                    tooltip.textContent = 'Count data unavailable';
+                                }
+                                
+                                tooltip.classList.add('visible');
+                                
+                                // Position tooltip near cursor
+                                var rect = this.getBoundingClientRect();
+                                tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                                tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                            });
+                            
+                            element.addEventListener('mouseleave', function() {
+                                tooltip.classList.remove('visible');
+                            });
+                            
+                            // Update tooltip position on mouse move
+                            element.addEventListener('mousemove', function(e) {
+                                var rect = this.getBoundingClientRect();
+                                tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                                tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                            });
+                        });
+                    }, 100);
                     
                     // Restore original Math.random after a delay to ensure wordcloud2 finishes
                     // WordCloud2 does layout calculations asynchronously

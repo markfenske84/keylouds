@@ -151,9 +151,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (cloudData) {
                             try {
                                 const keywords = JSON.parse(cloudData);
+                                
+                                // Store count data for tooltips
+                                const wordCounts = {};
+                                
+                                // Handle both old and new data format
                                 const wordList = Object.entries(keywords)
-                                    .sort(function(a, b) { return b[1] - a[1]; })
-                                    .map(function(entry) { return [entry[0], entry[1]]; });
+                                    .sort(function(a, b) { 
+                                        const weightA = typeof a[1] === 'object' ? a[1].weight : a[1];
+                                        const weightB = typeof b[1] === 'object' ? b[1].weight : b[1];
+                                        return weightB - weightA;
+                                    })
+                                    .map(function(entry) {
+                                        const word = entry[0];
+                                        const data = entry[1];
+                                        
+                                        if (typeof data === 'object') {
+                                            wordCounts[word] = data.count || 0;
+                                            return [word, data.weight || 1];
+                                        } else {
+                                            wordCounts[word] = 0;
+                                            return [word, data];
+                                        }
+                                    });
                                 
                                 const weights = wordList.map(function(item) { return item[1]; });
                                 const maxWeight = Math.max.apply(null, weights);
@@ -206,8 +226,98 @@ document.addEventListener('DOMContentLoaded', function() {
                                     shrinkToFit: true,
                                     minSize: 8,
                                     gridSize: 8,
-                                    wait: 0
+                                    wait: 0,
+                                    // Hover effect
+                                    hover: function(item, dimension, event) {
+                                        if (item) {
+                                            if (event.type === 'mouseover') {
+                                                if (item && item[0] && typeof item[0] === 'object') {
+                                                    const textNode = item[0];
+                                                    if (textNode.style) {
+                                                        textNode.style.textShadow = '2px 2px 4px rgba(0,0,0,0.3)';
+                                                        textNode.style.transform = 'scale(1.1)';
+                                                        textNode.style.transition = 'all 0.2s ease';
+                                                    }
+                                                }
+                                            } else if (event.type === 'mouseout') {
+                                                if (item && item[0] && typeof item[0] === 'object') {
+                                                    const textNode = item[0];
+                                                    if (textNode.style) {
+                                                        textNode.style.textShadow = '';
+                                                        textNode.style.transform = '';
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    // Click handler
+                                    click: function(item, dimension, event) {
+                                        if (item && item[0]) {
+                                            console.log('Clicked word:', item[0]);
+                                        }
+                                    }
                                 });
+                                
+                                // Add tooltips to word elements
+                                setTimeout(function() {
+                                    // Create tooltip element if it doesn't exist
+                                    var tooltip = document.getElementById('keylouds-tooltip');
+                                    if (!tooltip) {
+                                        tooltip = document.createElement('div');
+                                        tooltip.id = 'keylouds-tooltip';
+                                        tooltip.className = 'keylouds-tooltip';
+                                        document.body.appendChild(tooltip);
+                                    }
+                                    
+                                    const wordElements = container.querySelectorAll('span');
+                                    wordElements.forEach(function(element) {
+                                        const word = element.textContent || element.innerText;
+                                        const count = wordCounts[word];
+                                        
+                                        // Add tooltip for all words (show count if available, or indicate data unavailable)
+                                        if (count !== undefined && count > 0) {
+                                            element.setAttribute('title', 'Found ' + count + ' times');
+                                            element.setAttribute('data-count', count);
+                                            element.setAttribute('data-has-count', 'true');
+                                        } else {
+                                            // For old data or missing counts, still add tooltip
+                                            element.setAttribute('title', 'Count data unavailable');
+                                            element.setAttribute('data-count', '0');
+                                            element.setAttribute('data-has-count', 'false');
+                                            console.warn('Word missing count data:', word, 'Available counts:', Object.keys(wordCounts).slice(0, 5));
+                                        }
+                                        
+                                        // Add mouseover/mouseout events for custom tooltip
+                                        element.addEventListener('mouseenter', function(e) {
+                                            const count = this.getAttribute('data-count');
+                                            const hasCount = this.getAttribute('data-has-count') === 'true';
+                                            
+                                            if (hasCount && count > 0) {
+                                                tooltip.textContent = 'Found ' + count + ' times';
+                                            } else {
+                                                tooltip.textContent = 'Count data unavailable';
+                                            }
+                                            
+                                            tooltip.classList.add('visible');
+                                            
+                                            // Position tooltip near cursor
+                                            var rect = this.getBoundingClientRect();
+                                            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                                            tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                                        });
+                                        
+                                        element.addEventListener('mouseleave', function() {
+                                            tooltip.classList.remove('visible');
+                                        });
+                                        
+                                        // Update tooltip position on mouse move
+                                        element.addEventListener('mousemove', function(e) {
+                                            var rect = this.getBoundingClientRect();
+                                            tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                                            tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                                        });
+                                    });
+                                }, 100);
                                 
                                 // Delay restoration to let wordcloud2 finish async calculations
                                 if (seed > 0) {
@@ -282,9 +392,29 @@ document.addEventListener('DOMContentLoaded', function() {
                                 if (cloudData) {
                                     try {
                                         const keywords = JSON.parse(cloudData);
+                                        
+                                        // Store count data for tooltips
+                                        const wordCounts = {};
+                                        
+                                        // Handle both old and new data format
                                         const wordList = Object.entries(keywords)
-                                            .sort(function(a, b) { return b[1] - a[1]; })
-                                            .map(function(entry) { return [entry[0], entry[1]]; });
+                                            .sort(function(a, b) { 
+                                                const weightA = typeof a[1] === 'object' ? a[1].weight : a[1];
+                                                const weightB = typeof b[1] === 'object' ? b[1].weight : b[1];
+                                                return weightB - weightA;
+                                            })
+                                            .map(function(entry) {
+                                                const word = entry[0];
+                                                const data = entry[1];
+                                                
+                                                if (typeof data === 'object') {
+                                                    wordCounts[word] = data.count || 0;
+                                                    return [word, data.weight || 1];
+                                                } else {
+                                                    wordCounts[word] = 0;
+                                                    return [word, data];
+                                                }
+                                            });
                                         
                                         const weights = wordList.map(function(item) { return item[1]; });
                                         const maxWeight = Math.max.apply(null, weights);
@@ -334,8 +464,98 @@ document.addEventListener('DOMContentLoaded', function() {
                                             shrinkToFit: true,
                                             minSize: 8,
                                             gridSize: 8,
-                                            wait: 0
+                                            wait: 0,
+                                            // Hover effect
+                                            hover: function(item, dimension, event) {
+                                                if (item) {
+                                                    if (event.type === 'mouseover') {
+                                                        if (item && item[0] && typeof item[0] === 'object') {
+                                                            const textNode = item[0];
+                                                            if (textNode.style) {
+                                                                textNode.style.textShadow = '2px 2px 4px rgba(0,0,0,0.3)';
+                                                                textNode.style.transform = 'scale(1.1)';
+                                                                textNode.style.transition = 'all 0.2s ease';
+                                                            }
+                                                        }
+                                                    } else if (event.type === 'mouseout') {
+                                                        if (item && item[0] && typeof item[0] === 'object') {
+                                                            const textNode = item[0];
+                                                            if (textNode.style) {
+                                                                textNode.style.textShadow = '';
+                                                                textNode.style.transform = '';
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            // Click handler
+                                            click: function(item, dimension, event) {
+                                                if (item && item[0]) {
+                                                    console.log('Clicked word:', item[0]);
+                                                }
+                                            }
                                         });
+                                        
+                                        // Add tooltips to word elements
+                                        setTimeout(function() {
+                                            // Create tooltip element if it doesn't exist
+                                            var tooltip = document.getElementById('keylouds-tooltip');
+                                            if (!tooltip) {
+                                                tooltip = document.createElement('div');
+                                                tooltip.id = 'keylouds-tooltip';
+                                                tooltip.className = 'keylouds-tooltip';
+                                                document.body.appendChild(tooltip);
+                                            }
+                                            
+                                            const wordElements = container.querySelectorAll('span');
+                                            wordElements.forEach(function(element) {
+                                                const word = element.textContent || element.innerText;
+                                                const count = wordCounts[word];
+                                                
+                                                // Add tooltip for all words (show count if available, or indicate data unavailable)
+                                                if (count !== undefined && count > 0) {
+                                                    element.setAttribute('title', 'Found ' + count + ' times');
+                                                    element.setAttribute('data-count', count);
+                                                    element.setAttribute('data-has-count', 'true');
+                                                } else {
+                                                    // For old data or missing counts, still add tooltip
+                                                    element.setAttribute('title', 'Count data unavailable');
+                                                    element.setAttribute('data-count', '0');
+                                                    element.setAttribute('data-has-count', 'false');
+                                                    console.warn('Word missing count data:', word, 'Available counts:', Object.keys(wordCounts).slice(0, 5));
+                                                }
+                                                
+                                                // Add mouseover/mouseout events for custom tooltip
+                                                element.addEventListener('mouseenter', function(e) {
+                                                    const count = this.getAttribute('data-count');
+                                                    const hasCount = this.getAttribute('data-has-count') === 'true';
+                                                    
+                                                    if (hasCount && count > 0) {
+                                                        tooltip.textContent = 'Found ' + count + ' times';
+                                                    } else {
+                                                        tooltip.textContent = 'Count data unavailable';
+                                                    }
+                                                    
+                                                    tooltip.classList.add('visible');
+                                                    
+                                                    // Position tooltip near cursor
+                                                    var rect = this.getBoundingClientRect();
+                                                    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                                                    tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                                                });
+                                                
+                                                element.addEventListener('mouseleave', function() {
+                                                    tooltip.classList.remove('visible');
+                                                });
+                                                
+                                                // Update tooltip position on mouse move
+                                                element.addEventListener('mousemove', function(e) {
+                                                    var rect = this.getBoundingClientRect();
+                                                    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+                                                    tooltip.style.top = (rect.top - tooltip.offsetHeight - 10) + 'px';
+                                                });
+                                            });
+                                        }, 100);
                                         
                                         // Delay restoration to let wordcloud2 finish async calculations
                                         if (seed > 0) {

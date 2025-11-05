@@ -1,0 +1,181 @@
+.keylouds-admin-wrap {
+    margin: 20px 20px 20px 0;
+}
+
+.keylouds-admin-container {
+    background: #fff;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.keylouds-create-section {
+    padding-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 30px;
+}
+
+.keylouds-create-section h2 {
+    margin-top: 0;
+}
+
+#keylouds-create-btn {
+    font-size: 16px;
+    padding: 8px 20px;
+    height: auto;
+}
+
+#keylouds-create-btn .dashicons {
+    line-height: 1.2;
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+#keylouds-message {
+    margin: 20px 0;
+    padding: 12px;
+    border-left: 4px solid #00a0d2;
+}
+
+#keylouds-message.success {
+    background: #ecf7ed;
+    border-left-color: #46b450;
+    color: #32373c;
+}
+
+#keylouds-message.error {
+    background: #fef7f1;
+    border-left-color: #dc3232;
+    color: #32373c;
+}
+
+#keylouds-loader {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f0f0f1;
+    border-radius: 4px;
+    text-align: center;
+}
+
+#keylouds-loader .spinner {
+    float: none;
+    margin: 0 auto;
+}
+
+.keylouds-list-section {
+    margin-top: 30px;
+}
+
+.keylouds-empty-state {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.keylouds-shortcode-copy {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #f0f0f1;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+.keylouds-copy-btn {
+    vertical-align: middle;
+}
+
+.keylouds-copy-btn .dashicons {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.keylouds-preview-btn,
+.keylouds-delete-btn {
+    margin-right: 5px;
+}
+
+.keylouds-preview-btn .dashicons,
+.keylouds-delete-btn .dashicons {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.keylouds-preview-row {
+    background: #f9f9f9;
+}
+
+.keylouds-preview-container {
+    padding: 20px;
+}
+
+.keylouds-preview-container h3 {
+    margin-top: 0;
+}
+
+/* Keyword Cloud Styling in Admin Preview - Match Frontend Exactly */
+.keylouds-cloud {
+    line-height: 1.2;
+    text-align: center;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.keylouds-word {
+    display: inline-block;
+    margin: 0.1em 0.25em;
+    padding: 0.2em 0.4em;
+    color: #2271b1;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: default;
+    white-space: nowrap;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.keylouds-word:hover {
+    color: #135e96;
+    transform: scale(1.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.keylouds-info-box {
+    background: #e7f7ff;
+    border-left: 4px solid #2271b1;
+    padding: 15px 20px;
+    margin: 20px 0;
+}
+
+.keylouds-info-box h3 {
+    margin-top: 0;
+    color: #135e96;
+}
+
+.keylouds-info-box ul {
+    margin: 10px 0;
+}
+
+.keylouds-info-box li {
+    margin-bottom: 8px;
+}
+
+/* Responsive Table */
+@media screen and (max-width: 782px) {
+    .keylouds-admin-container {
+        padding: 15px;
+    }
+    
+    .wp-list-table .column-url,
+    .wp-list-table .column-date {
+        display: none;
+    }
+}
+

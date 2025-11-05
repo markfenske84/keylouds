@@ -1,0 +1,195 @@
+/* Keyword Cloud Frontend Styling - Wordcloud2 Container */
+.keylouds-cloud-container {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Editor-specific styles */
+.block-editor .keylouds-cloud-container,
+.editor-styles-wrapper .keylouds-cloud-container {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+/* Ensure visibility in ServerSideRender */
+.wp-block-server-side-render .keylouds-cloud-container {
+    display: block !important;
+}
+
+/* Wordcloud2 generated span elements */
+.keylouds-cloud-container span {
+    display: inline-block;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.keylouds-cloud-container span:hover {
+    opacity: 0.8;
+}
+
+/* Fallback styling for non-JS users */
+.keylouds-cloud-fallback {
+    line-height: 1.2;
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.keylouds-word {
+    display: inline-block;
+    margin: 0.1em 0.25em;
+    padding: 0.2em 0.4em;
+    color: #2271b1;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: default;
+    white-space: nowrap;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.keylouds-word:hover {
+    color: #135e96;
+    transform: scale(1.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive sizing for containers */
+@media (max-width: 1200px) {
+    .keylouds-cloud-container {
+        min-height: 280px;
+    }
+    
+    .keylouds-word {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 900px) {
+    .keylouds-cloud-container {
+        min-height: 250px;
+    }
+    
+    .keylouds-word {
+        font-size: 0.9em;
+        margin: 0.1em 0.2em;
+    }
+}
+
+@media (max-width: 600px) {
+    .keylouds-cloud-container {
+        min-height: 220px;
+        padding: 15px;
+    }
+    
+    .keylouds-cloud-fallback {
+        padding: 15px;
+        line-height: 1.1;
+    }
+    
+    .keylouds-word {
+        font-size: 0.85em;
+        margin: 0.1em 0.2em;
+        padding: 0.15em 0.3em;
+    }
+}
+
+@media (max-width: 400px) {
+    .keylouds-cloud-container {
+        min-height: 200px;
+        padding: 10px;
+    }
+    
+    .keylouds-cloud-fallback {
+        padding: 10px;
+        line-height: 1.1;
+    }
+    
+    .keylouds-word {
+        font-size: 0.8em;
+        margin: 0.1em 0.15em;
+    }
+}
+
+/* Container queries for flexible sizing in columns */
+.keylouds-cloud-container {
+    container-type: inline-size;
+}
+
+/* When container is very narrow (like in a sidebar) */
+@container (max-width: 300px) {
+    .keylouds-cloud-container {
+        min-height: 180px;
+    }
+    
+    .keylouds-word {
+        font-size: 0.7em;
+        margin: 0.1em;
+        padding: 0.1em 0.2em;
+    }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+    .keylouds-cloud-container span {
+        color: #4a9eff;
+    }
+    
+    .keylouds-word {
+        color: #4a9eff;
+    }
+    
+    .keylouds-word:hover {
+        color: #7ab8ff;
+    }
+}
+
+/* Print styles */
+@media print {
+    .keylouds-word {
+        color: #000;
+        text-shadow: none;
+    }
+    
+    .keylouds-word:hover {
+        transform: none;
+    }
+}
+
+/* Accessibility - high contrast mode */
+@media (prefers-contrast: high) {
+    .keylouds-word {
+        font-weight: 700;
+        text-decoration: underline;
+    }
+}
+
+/* Color variations (optional - can be added via class) */
+.keylouds-cloud.keylouds-colorful .keylouds-word:nth-child(5n+1) {
+    color: #e74c3c;
+}
+
+.keylouds-cloud.keylouds-colorful .keylouds-word:nth-child(5n+2) {
+    color: #3498db;
+}
+
+.keylouds-cloud.keylouds-colorful .keylouds-word:nth-child(5n+3) {
+    color: #2ecc71;
+}
+
+.keylouds-cloud.keylouds-colorful .keylouds-word:nth-child(5n+4) {
+    color: #f39c12;
+}
+
+.keylouds-cloud.keylouds-colorful .keylouds-word:nth-child(5n+5) {
+    color: #9b59b6;
+}
+

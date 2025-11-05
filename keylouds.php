@@ -14,6 +14,20 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Initialize Plugin Update Checker (only for non-WordPress.org installations)
+if (!defined('KEYLOUDS_DISABLE_UPDATES') && file_exists(__DIR__ . '/plugin-update-checker/plugin-update-checker.php')) {
+    require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
+    
+    $keyloudsUpdateChecker = YahnisElsts\PluginUpdateChecker\v5p4\PucFactory::buildUpdateChecker(
+        'https://github.com/yourusername/keylouds',
+        __FILE__,
+        'keylouds'
+    );
+    
+    // Set the branch to check for updates
+    $keyloudsUpdateChecker->setBranch('main');
+}
+
 // Define plugin constants
 define('KEYLOUDS_VERSION', '1.1.0');
 define('KEYLOUDS_PLUGIN_DIR', plugin_dir_path(__FILE__));

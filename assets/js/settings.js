@@ -2,21 +2,29 @@ document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
     // Initialize WordPress color pickers
+    // Note: wpColorPicker is a jQuery plugin provided by WordPress
     if (typeof jQuery !== 'undefined' && jQuery.fn.wpColorPicker) {
-        jQuery('.keylouds-color-picker').wpColorPicker({
-            change: function(event, ui) {
-                // Update preview when color changes
-                updateColorPreview();
-            }
+        const colorPickers = document.querySelectorAll('.keylouds-color-picker');
+        colorPickers.forEach(function(picker) {
+            jQuery(picker).wpColorPicker({
+                change: function(event, ui) {
+                    // Update preview when color changes
+                    updateColorPreview();
+                }
+            });
         });
     }
     
     function updateColorPreview() {
-        if (typeof jQuery === 'undefined') return;
+        const colorSmallInput = document.getElementById('keylouds_color_small');
+        const colorMediumInput = document.getElementById('keylouds_color_medium');
+        const colorLargeInput = document.getElementById('keylouds_color_large');
         
-        const colorSmall = jQuery('#keylouds_color_small').val();
-        const colorMedium = jQuery('#keylouds_color_medium').val();
-        const colorLarge = jQuery('#keylouds_color_large').val();
+        if (!colorSmallInput || !colorMediumInput || !colorLargeInput) return;
+        
+        const colorSmall = colorSmallInput.value;
+        const colorMedium = colorMediumInput.value;
+        const colorLarge = colorLargeInput.value;
         
         const preview = document.querySelector('.keylouds-color-preview');
         if (preview) {

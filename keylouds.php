@@ -1,10 +1,11 @@
 <?php
 /**
  * Plugin Name: Keylouds
- * Plugin URI: https://github.com/yourusername/keylouds
+ * Plugin URI: https://github.com/markfenske84/keylouds
  * Description: Create keyword clouds from any URL and display them with shortcodes or Gutenberg blocks
  * Version: 1.1.0
- * Author: Your Name
+ * Author: Webfor
+ * Author URI: https://webfor.com
  * License: GPL v2 or later
  * Text Domain: keylouds
  */
@@ -19,7 +20,7 @@ if (!defined('KEYLOUDS_DISABLE_UPDATES') && file_exists(__DIR__ . '/plugin-updat
     require_once __DIR__ . '/plugin-update-checker/plugin-update-checker.php';
     
     $keyloudsUpdateChecker = YahnisElsts\PluginUpdateChecker\v5p4\PucFactory::buildUpdateChecker(
-        'https://github.com/yourusername/keylouds',
+        'https://github.com/markfenske84/keylouds',
         __FILE__,
         'keylouds'
     );

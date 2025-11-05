@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/markfenske84/keylouds
  * Description: Create keyword clouds from any URL and display them with shortcodes or Gutenberg blocks
  * Version: 1.1.1
- * Author: Webfor
+ * Author: Webfor Agency
  * Author URI: https://webfor.com
  * License: GPL v2 or later
  * Text Domain: keylouds

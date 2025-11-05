@@ -3,7 +3,7 @@
  * Plugin Name: Keylouds
  * Plugin URI: https://github.com/markfenske84/keylouds
  * Description: Create keyword clouds from any URL and display them with shortcodes or Gutenberg blocks
- * Version: 1.1.2
+ * Version: 1.1.3
  * Author: Webfor Agency
  * Author URI: https://webfor.com
  * License: GPL v2 or later
@@ -30,7 +30,7 @@ if (!defined('KEYLOUDS_DISABLE_UPDATES') && file_exists(__DIR__ . '/plugin-updat
 }
 
 // Define plugin constants
-define('KEYLOUDS_VERSION', '1.1.2');
+define('KEYLOUDS_VERSION', '1.1.3');
 define('KEYLOUDS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('KEYLOUDS_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -55,6 +55,9 @@ class Keylouds {
         
         // Check for database updates
         add_action('plugins_loaded', array($this, 'check_database_updates'));
+        
+        // Add settings link on plugins page
+        add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add_plugin_action_links'));
     }
     
     public function activate() {
@@ -63,6 +66,12 @@ class Keylouds {
         
         // Set database version
         update_option('keylouds_db_version', '1.1.0');
+    }
+    
+    public function add_plugin_action_links($links) {
+        $settings_link = '<a href="' . admin_url('admin.php?page=keylouds-settings') . '">' . __('Settings', 'keylouds') . '</a>';
+        array_unshift($links, $settings_link);
+        return $links;
     }
     
     public function check_database_updates() {
